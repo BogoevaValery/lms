@@ -32,24 +32,40 @@ func Calc(expression string) (float64, error) {
 func tokenize(expression string) ([]string, error) {
 	var tokens []string
 	var number strings.Builder
+	dotCount := 0 // Счетчик точек в числе
 
 	for _, ch := range expression {
 		switch {
-		case unicode.IsDigit(ch) || ch == '.':
+		case unicode.IsDigit(ch):
 			number.WriteRune(ch)
+
+		case ch == '.':
+			if dotCount > 0 {
+				return nil, errors.New("invalid number format: multiple decimal points")
+			}
+			dotCount++
+			number.WriteRune(ch)
+
 		case ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')':
 			if number.Len() > 0 {
 				tokens = append(tokens, number.String())
 				number.Reset()
+				dotCount = 0 // Сбросим счетчик точек
 			}
 			tokens = append(tokens, string(ch))
+
 		case unicode.IsSpace(ch):
-			continue
+			if number.Len() > 0 {
+				tokens = append(tokens, number.String())
+				number.Reset()
+				dotCount = 0
+			}
+
 		default:
 			return nil, errors.New("invalid character in expression")
 		}
 	}
-	
+
 	if number.Len() > 0 {
 		tokens = append(tokens, number.String())
 	}
