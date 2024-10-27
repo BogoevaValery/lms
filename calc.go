@@ -28,7 +28,7 @@ func Calc(expression string) (float64, error) {
 	return result, nil
 }
 
-// tokenize разбивает выражение на токены.
+// tokenize разбивает строку выражения на токены (числа, операторы, скобки)
 func tokenize(expression string) ([]string, error) {
 	var tokens []string
 	var number strings.Builder
@@ -119,6 +119,7 @@ func toRPN(tokens []string) ([]string, error) {
 	return output, nil
 }
 
+
 // evaluateRPN вычисляет значение выражения, представленное в виде обратной польской нотации (RPN).
 func evaluateRPN(rpn []string) (float64, error) {
 	var stack []float64
@@ -168,12 +169,4 @@ func isNumber(token string) bool {
 	return err == nil
 }
 
-func main() {
-	expression := "3 + 5 * (2 - 8)"
-	result, err := Calc(expression)
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		fmt.Println("Result:", result)
-	}
-}
+
